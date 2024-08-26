@@ -1,6 +1,5 @@
-const HeroesListItem = (props) => {
+const HeroesListItem = ({name, description, element, onDelete}) => {
     let elementClassName;
-    const { name, description, element, deleteItem } = props;
 
     switch (element) {
         case "fire":
@@ -38,7 +37,7 @@ const HeroesListItem = (props) => {
                     type="button"
                     className="btn-close btn-close"
                     aria-label="Close"
-                    onClick={() => deleteItem()}
+                    onClick={onDelete}
                 ></button>
             </span>
         </li>
