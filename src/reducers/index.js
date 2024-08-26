@@ -26,6 +26,12 @@ const reducer = (state = initialState, action) => {
                 ...state,
                 heroes: newHeroList,
             };
+        case "HERO_CREATED":
+            let newCreatedHeroList = [...state.heroes, action.payload];
+            return {
+                ...state,
+                heroes: newCreatedHeroList,
+            };
         case "HEROES_FETCHING_ERROR":
             return {
                 ...state,
