@@ -12,7 +12,9 @@ import HeroesListItem from "../heroesListItem/HeroesListItem";
 import Spinner from "../spinner/Spinner";
 
 const HeroesList = () => {
-    const { heroes, heroesLoadingStatus } = useSelector((state) => state);
+    const { filteredHeroes, heroesLoadingStatus } = useSelector(
+        (state) => state
+    );
     const dispatch = useDispatch();
     const { request } = useHttp();
 
@@ -25,13 +27,13 @@ const HeroesList = () => {
         // eslint-disable-next-line
     }, []);
 
-    const onDelete = (id) => {
+    const onDelete = useCallback((id) => {
         request(`http://localhost:3001/heroes/${id}`, "DELETE")
             .then((data) => console.log(data, "Deleted"))
             .then(dispatch(heroDeleted(id)))
             .catch((err) => console.log(err));
         // eslint-disable-next-line
-    };
+    });
 
     if (heroesLoadingStatus === "loading") {
         return <Spinner />;
@@ -55,7 +57,7 @@ const HeroesList = () => {
         });
     };
 
-    const elements = renderHeroesList(heroes);
+    const elements = renderHeroesList(filteredHeroes);
     return <ul>{elements}</ul>;
 };
 

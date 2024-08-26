@@ -2,13 +2,15 @@ import { useState } from "react";
 import { v4 as uuidv4 } from "uuid";
 
 import { useHttp } from "../../hooks/http.hook";
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { heroCreated } from "../../actions";
 
 const HeroesAddForm = () => {
     const [heroName, setHeroName] = useState("");
     const [heroDescr, setHeroDescr] = useState("");
     const [heroElement, setHeroElement] = useState("");
+
+    const { filters, filtersLoadingStatus } = useSelector((state) => state);
 
     const dispatch = useDispatch();
     const { request } = useHttp();
@@ -35,6 +37,27 @@ const HeroesAddForm = () => {
         setHeroName("");
         setHeroDescr("");
         setHeroElement("");
+    };
+
+    const renderFilters = (filters, status) => {
+        if (status === "loading") {
+            return <option>Loading elements</option>;
+        } else if (status === "error") {
+            return <option>Loading error</option>;
+        }
+
+        if (filters && filters.length > 0) {
+            return filters.map(({ name, label }) => {
+                // eslint-disable-next-line
+                if (name === "all") return;
+
+                return (
+                    <option key={name} value={name}>
+                        {label}
+                    </option>
+                );
+            });
+        }
     };
     return (
         <form className="border p-4 shadow-lg rounded" onSubmit={onSubmit}>
@@ -83,10 +106,7 @@ const HeroesAddForm = () => {
                     onChange={(e) => setHeroElement(e.target.value)}
                 >
                     <option>I own the element...</option>
-                    <option value="fire">Fire</option>
-                    <option value="water">Water</option>
-                    <option value="wind">Wind</option>
-                    <option value="earth">Earth</option>
+                    {renderFilters(filters, filtersLoadingStatus)}
                 </select>
             </div>
 
