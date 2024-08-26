@@ -1,11 +1,11 @@
 import { useHttp } from "../../hooks/http.hook";
-import { useEffect } from "react";
+import { useEffect, useCallback } from "react";
 import { useDispatch, useSelector } from "react-redux";
 
 import {
     heroesFetching,
     heroesFetched,
-    heroesDeleted,
+    heroDeleted,
     heroesFetchingError,
 } from "../../actions";
 import HeroesListItem from "../heroesListItem/HeroesListItem";
@@ -25,6 +25,14 @@ const HeroesList = () => {
         // eslint-disable-next-line
     }, []);
 
+    const onDelete = (id) => {
+        request(`http://localhost:3001/heroes/${id}`, "DELETE")
+            .then((data) => console.log(data, "Deleted"))
+            .then(dispatch(heroDeleted(id)))
+            .catch((err) => console.log(err));
+        // eslint-disable-next-line
+    };
+
     if (heroesLoadingStatus === "loading") {
         return <Spinner />;
     } else if (heroesLoadingStatus === "error") {
@@ -41,14 +49,10 @@ const HeroesList = () => {
                 <HeroesListItem
                     key={id}
                     {...props}
-                    deleteItem={() => deleteItem(id)}
+                    onDelete={() => onDelete(id)}
                 />
             );
         });
-    };
-
-    const deleteItem = (id) => {
-        dispatch({ type: "HEROES_DELETE", id: id });
     };
 
     const elements = renderHeroesList(heroes);
