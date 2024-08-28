@@ -2,34 +2,26 @@ import {
     legacy_createStore as createStore,
     combineReducers,
     compose,
+    applyMiddleware,
 } from "redux";
 
 import filters from "../reducers/filters";
 import heroes from "../reducers/heroes";
 
-const enhancer =
-    (createStore) =>
-    (...args) => {
-        const store = createStore(...args);
+const stringMiddleware = (store) => (dispatch) => (action) => {
+    if (typeof action === "string") {
+        return dispatch({
+            type: action,
+        });
+    }
 
-        const oldDispatch = store.dispatch;
+    return dispatch(action);
+};
 
-        store.dispatch = (action) => {
-            if (typeof action === "string") {
-                return oldDispatch({
-                    type: action,
-                });
-            }
-
-            return oldDispatch(action);
-        };
-
-        return store;
-    };
 const store = createStore(
     combineReducers({ filters, heroes }),
     compose(
-        enhancer,
+        applyMiddleware(stringMiddleware),
         window.__REDUX_DEVTOOLS_EXTENSION__ &&
             window.__REDUX_DEVTOOLS_EXTENSION__()
     )
